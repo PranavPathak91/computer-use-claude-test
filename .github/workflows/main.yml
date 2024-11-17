@@ -43,22 +43,33 @@ jobs:
         chmod 700 ~/.anthropic
         chmod 600 ~/.anthropic/api_key
 
-    - name: Debug Directory
+    - name: Debug Files and Permissions
       run: |
-        echo "Current directory:"
+        echo "==== Current Location ===="
         pwd
-        echo "Directory contents:"
+        echo "==== Repository Contents ===="
         ls -la
-        echo "GitHub Workspace:"
-        echo $GITHUB_WORKSPACE
-        ls -la $GITHUB_WORKSPACE
+        echo "==== Parent Directory ===="
+        ls -la ..
+        echo "==== Full Path Check ===="
+        find . -name "start_all.sh"
 
     - name: Start Services
       run: |
-        echo "Making script executable..."
-        chmod +x $GITHUB_WORKSPACE/start_all.sh || echo "chmod failed"
-        echo "Running script from workspace..."
-        bash $GITHUB_WORKSPACE/start_all.sh &
+        echo "==== Attempting to locate start_all.sh ===="
+        if [ -f "start_all.sh" ]; then
+          echo "File exists in current directory"
+          chmod +x start_all.sh
+          ./start_all.sh &
+        elif [ -f "$GITHUB_WORKSPACE/start_all.sh" ]; then
+          echo "File exists in GITHUB_WORKSPACE"
+          chmod +x $GITHUB_WORKSPACE/start_all.sh
+          $GITHUB_WORKSPACE/start_all.sh &
+        else
+          echo "start_all.sh not found!"
+          echo "Current directory contents:"
+          ls -la
+        fi
         sleep 5
 
     - name: Run Streamlit
