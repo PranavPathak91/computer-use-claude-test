@@ -1,0 +1,11 @@
+streamlit
+anthropic
+httpx
+boto3
+google-auth
+pytest
+asyncio
+python-dotenv
+anthropic[beta]
+types-requests
+typing_extensions
